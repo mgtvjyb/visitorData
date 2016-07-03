@@ -1,0 +1,13 @@
+syntax = "proto3";
+package visitor;
+
+message Record{
+    int32 Hid= 1;
+    int32 Vid= 2;
+    int32 Time=3;
+    int32 Flag=4;
+};
+
+message Visitor {
+    repeated Record Records=1;
+};
