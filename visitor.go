@@ -31,10 +31,10 @@ func NewVisitor(redisConn redis.Conn, uid string) (*VisitorData, error) {
 	if uid == "" {
 		return nil, ErrorEmptyKey
 	}
-	visitorData := &VisitorData{uid: uid}
+	visitorData := &VisitorData{Visitor: Visitor{Records: make([]*Record, 0)}, uid: uid}
 	data, err := redis.Bytes(redisConn.Do("GET", RedisVisitorPrifix+uid))
 	if err == redis.ErrNil {
-		return nil, ErrorZeroValue
+		return visitorData, ErrorZeroValue
 	} else if err != nil {
 		return nil, err
 	}
