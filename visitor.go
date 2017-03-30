@@ -3,6 +3,7 @@ package visitor
 import (
 	"errors"
 	"github.com/garyburd/redigo/redis"
+	gredis "github.com/go-redis/redis"
 	proto "github.com/golang/protobuf/proto"
 	"time"
 )
@@ -36,6 +37,22 @@ func NewVisitor(redisConn redis.Conn, uid string) (*VisitorData, error) {
 	if err == redis.ErrNil {
 		return visitorData, ErrorZeroValue
 	} else if err != nil {
+		return nil, err
+	}
+	err = proto.Unmarshal(data, &visitorData.Visitor)
+	if err != nil {
+		return nil, err
+	}
+	return visitorData, nil
+}
+func NewVisitorCluster(client gredis.ClusterClient, uid string) (*VisitorData, error) {
+	if uid == "" {
+		return nil, ErrorEmptyKey
+	}
+	visitorData := &VisitorData{Visitor: Visitor{Records: make([]*Record, 0)}, uid: uid}
+	scmd := client.Get(RedisVisitorPrifix+uid)
+	data,err := scmd.Bytes()
+	if err != nil {
 		return nil, err
 	}
 	err = proto.Unmarshal(data, &visitorData.Visitor)
