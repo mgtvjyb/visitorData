@@ -92,3 +92,13 @@ func (v *VisitorData) Save(redisConn redis.Conn, ttl int) error {
 	_, err = redis.String(redisConn.Do("SET", RedisVisitorPrifix+v.uid, data, "EX", ttl))
 	return err
 }
+
+func(v *VisitorData) SaveCluster(client gredis.ClusterClient,ttl int) error{
+	data, err := proto.Marshal(&v.Visitor)
+	if len(data) == 0 {
+		return ErrorZeroValue
+	}
+	
+	statusCmd := client.Set(RedisVisitorPrifix+v.uid,data,time.Duration(ttl))
+	return statusCmd.Err()
+}
