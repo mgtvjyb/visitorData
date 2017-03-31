@@ -99,6 +99,6 @@ func(v *VisitorData) SaveCluster(client gredis.ClusterClient,ttl int) error{
 		return ErrorZeroValue
 	}
 	
-	statusCmd := client.Set(RedisVisitorPrifix+v.uid,data,ttl*time.Second)
+	statusCmd := client.Set(RedisVisitorPrifix+v.uid,data,time.Duration(ttl)*time.Second)
 	return statusCmd.Err()
 }
