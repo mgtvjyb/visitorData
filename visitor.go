@@ -94,7 +94,7 @@ func (v *VisitorData) Save(redisConn redis.Conn, ttl int) error {
 }
 
 func(v *VisitorData) SaveCluster(client gredis.ClusterClient,ttl int) error{
-	data, err := proto.Marshal(&v.Visitor)
+	data, _ := proto.Marshal(&v.Visitor)
 	if len(data) == 0 {
 		return ErrorZeroValue
 	}
