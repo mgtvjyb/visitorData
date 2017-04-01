@@ -52,7 +52,9 @@ func NewVisitorCluster(client gredis.ClusterClient, uid string) (*VisitorData, e
 	visitorData := &VisitorData{Visitor: Visitor{Records: make([]*Record, 0)}, uid: uid}
 	scmd := client.Get(RedisVisitorPrifix+uid)
 	data,err := scmd.Bytes()
-	if err != nil {
+	if err == gredis.Nil {
+		return visitorData, err
+	}else if err != nil {
 		return nil, err
 	}
 	err = proto.Unmarshal(data, &visitorData.Visitor)
